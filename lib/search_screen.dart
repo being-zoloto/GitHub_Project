@@ -53,6 +53,25 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+  void _clearSearch() {
+    setState(() {
+      _searchController.clear();
+      searchResults.clear();
+      errorMessage = '';
+    });
+  }
+
+  void _navigateToUserDetails(String username) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UserDetailsScreen(
+          username: username,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,19 +87,29 @@ class _SearchScreenState extends State<SearchScreen> {
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(30.0),
               ),
-              child: TextField(
-                controller: _searchController,
-                onSubmitted: (_) {
-                  _handleSearch();
-                },
-                decoration: InputDecoration(
-                  prefixIcon: IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: _handleSearch,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      onSubmitted: (_) {
+                        _handleSearch();
+                      },
+                      decoration: InputDecoration(
+                        prefixIcon: IconButton(
+                          icon: const Icon(Icons.search),
+                          onPressed: _handleSearch,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: _clearSearch,
+                        ),
+                        border: InputBorder.none,
+                        hintText: 'Search here..',
+                      ),
+                    ),
                   ),
-                  border: InputBorder.none,
-                  hintText: 'Search here..',
-                ),
+                ],
               ),
             ),
           ),
@@ -95,14 +124,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserDetailsScreen(
-                            username: searchResults[index]['login'],
-                          ),
-                        ),
-                      );
+                      _navigateToUserDetails(searchResults[index]['login']);
                     },
                     child: Card(
                       elevation: 4,
